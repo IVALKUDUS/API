@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Carbon\Carbon;
+use Exception;
 
 class AdminController extends Controller
 {
@@ -436,5 +438,104 @@ class AdminController extends Controller
         $this->logActivity('Menghapus peminjaman ID: #' . $id);
 
         return redirect()->route('admin.peminjaman.index')->with('success', 'Data peminjaman berhasil dihapus.');
+    }
+
+    // =========================================================
+    // CRUD PENGEMBALIAN
+    // =========================================================
+
+    public function indexPengembalian(Request $request): View
+    {
+        $search = $request->input('search');
+
+        $pengembalians = Pengembalian::with(['peminjaman.user', 'peminjaman.detailPinjams.alat', 'petugas'])
+            ->when($search, function ($query, $search) {
+                $query->whereHas('peminjaman.user', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                });
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('admin.pengembalian.index', compact('pengembalians', 'search'));
+    }
+
+    public function createPengembalian(): View
+    {
+        $peminjamanAktif = Peminjaman::with('user')
+            ->where('status', 'dipinjam')
+            ->latest()
+            ->get();
+
+        return view('admin.pengembalian.create', compact('peminjamanAktif'));
+    }
+
+    public function storePengembalian(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'peminjaman_id' => 'required|exists:peminjaman,id',
+            'tgl_kembali' => 'required|date',
+            'kondisi_kembali' => 'required|string',
+            'denda' => 'nullable|numeric|min:0',
+        ]);
+
+        try {
+            DB::transaction(function () use ($request) {
+                $peminjaman = Peminjaman::with('detailPinjams.alat')
+                    ->lockForUpdate()->findOrFail($request->peminjaman_id);
+
+                if (strtolower($peminjaman->status) !== 'dipinjam') {
+                    throw new Exception("Peminjaman ini berstatus '{$peminjaman->status}', bukan 'dipinjam'.");
+                }
+
+                $tglKembaliPlan = Carbon::parse($peminjaman->tgl_kembali_plan)->startOfDay();
+                $hariIni = Carbon::parse($request->tgl_kembali)->startOfDay();
+                $statusBaru = $hariIni->greaterThan($tglKembaliPlan) ? 'telat' : 'dikembalikan';
+
+                Pengembalian::create([
+                    'peminjaman_id' => $peminjaman->id,
+                    'tgl_kembali' => $request->tgl_kembali,
+                    'kondisi_kembali' => $request->kondisi_kembali,
+                    'denda' => $request->denda ?? 0,
+                    'petugas_id' => auth()->id(),
+                ]);
+
+                $peminjaman->update(['status' => $statusBaru]);
+
+                foreach ($peminjaman->detailPinjams as $detail) {
+                    Alat::where('id', $detail->alat_id)->increment('stok', $detail->jumlah);
+                }
+            });
+
+            $this->logActivity('Memproses pengembalian peminjaman ID: #' . $request->peminjaman_id);
+
+            return redirect()->route('admin.pengembalian.index')->with('success', 'Pengembalian berhasil diproses!');
+        } catch (Exception $e) {
+            return redirect()->back()->withInput()->with('error', $e->getMessage());
+        }
+    }
+
+    public function destroyPengembalian(int $id): RedirectResponse
+    {
+        try {
+            DB::transaction(function () use ($id) {
+                $pengembalian = Pengembalian::findOrFail($id);
+                $peminjaman = Peminjaman::with('detailPinjams.alat')->findOrFail($pengembalian->peminjaman_id);
+
+                foreach ($peminjaman->detailPinjams as $detail) {
+                    Alat::where('id', $detail->alat_id)->decrement('stok', $detail->jumlah);
+                }
+
+                $peminjaman->update(['status' => 'dipinjam']);
+                $pengembalian->delete();
+            });
+
+            $this->logActivity('Menghapus data pengembalian ID: #' . $id);
+
+            return redirect()->route('admin.pengembalian.index')->with('success', 'Data pengembalian berhasil dihapus.');
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 }

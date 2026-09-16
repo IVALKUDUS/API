@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>@yield('title', 'Dashboard Admin')</title>
+    <title>@yield('header_title', View::getSection('title'))</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -56,7 +56,7 @@
                 </a>
 
                 <!-- Kelola Pengembalian -->
-                <a href="#"
+                <a href="{{ route('admin.pengembalian.index') }}"
                     class="block px-4 py-2 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white transition">
                     Kelola Pengembalian
                 </a>

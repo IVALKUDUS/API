@@ -5,7 +5,8 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\PetugasController;
 use App\Http\Controllers\PeminjamController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\API\PeminjamanController; // Disesuaikan dengan PeminjamanController di modul
+use App\Http\Controllers\API\LogAktivitasController;
+use App\Http\Controllers\API\PeminjamanController;
 
 // Home / Landing Page
 Route::get('/', function () {
@@ -66,14 +67,14 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::put('/peminjaman-api/{peminjaman}', [PeminjamanController::class, 'update'])->name('api.peminjaman.update');
     Route::delete('/peminjaman-api/{peminjaman}', [PeminjamanController::class, 'destroy'])->name('api.peminjaman.destroy');
 
-    // CRUD Pengembalian
-    Route::get('/pengembalian', [PengembalianController::class, 'index']);
-    Route::get('/pengembalian/{pengembalian}', [PengembalianController::class, 'show']);
-    Route::put('/pengembalian/{pengembalian}', [PengembalianController::class, 'update']);
-    Route::delete('/pengembalian/{pengembalian}', [PengembalianController::class, 'destroy']);
+    // CRUD Pengembalian (Mengarahkan ke AdminController untuk render Blade View)
+    Route::get('/pengembalian', [AdminController::class, 'indexPengembalian'])->name('pengembalian.index');
+    Route::get('/pengembalian/create', [AdminController::class, 'createPengembalian'])->name('pengembalian.create');
+    Route::post('/pengembalian', [AdminController::class, 'storePengembalian'])->name('pengembalian.store');
+    Route::delete('/pengembalian/{id}', [AdminController::class, 'destroyPengembalian'])->name('pengembalian.destroy');
     
-    // CRUD Log Aktivitas
-    Route::get('/log-aktivitas', [LogAktivitasController::class, 'index']);
+    // Log Aktivitas
+    Route::get('/log-aktivitas', [LogAktivitasController::class, 'index'])->name('log.index');
 });
 
 // ==========================================
@@ -93,7 +94,6 @@ Route::middleware(['auth', 'role:petugas,admin'])->prefix('petugas')->name('petu
     // Pengembalian
     Route::get('/pengembalian', [PetugasController::class, 'indexPengembalian'])->name('pengembalian.index');
     Route::post('/pengembalian/{id}/proses', [PetugasController::class, 'prosesPengembalian'])->name('pengembalian.proses');
-    Route::post('/pengembalian', [PengembalianController::class, 'store']);
 
     // Laporan
     Route::get('/laporan', function() {
