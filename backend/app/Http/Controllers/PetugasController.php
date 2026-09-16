@@ -28,12 +28,13 @@ class PetugasController extends Controller
         return view('petugas.peminjaman.index', compact('peminjamans', 'search'));
     }
 
-    // Menampilkan daftar pengembalian / barang yang sedang dipinjam
+    // Menampilkan daftar peminjaman yang sedang dipinjam (siap dikembalikan)
     public function indexPengembalian(Request $request)
     {
         $search = $request->input('search');
 
-        $peminjamans = Peminjaman::with(['user', 'detailPinjams.alat'])
+        // Menggunakan nama variabel $pengembalian (tanpa 's')
+        $pengembalian = Peminjaman::with(['user', 'detailPinjams.alat'])
             ->where('status', 'dipinjam')
             ->when($search, function ($query, $search) {
                 return $query->whereHas('user', function ($q) use ($search) {
@@ -43,7 +44,7 @@ class PetugasController extends Controller
             ->latest()
             ->get();
 
-        return view('petugas.pengembalian.index', compact('peminjamans', 'search'));
+        return view('petugas.pengembalian.index', compact('pengembalian', 'search'));
     }
 
     // Menyetujui Peminjaman (Mengubah status & mengurangi stok alat)
