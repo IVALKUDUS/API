@@ -67,7 +67,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::put('/peminjaman-api/{peminjaman}', [PeminjamanController::class, 'update'])->name('api.peminjaman.update');
     Route::delete('/peminjaman-api/{peminjaman}', [PeminjamanController::class, 'destroy'])->name('api.peminjaman.destroy');
 
-    // CRUD Pengembalian (Mengarahkan ke AdminController untuk render Blade View)
+    // CRUD Pengembalian
     Route::get('/pengembalian', [AdminController::class, 'indexPengembalian'])->name('pengembalian.index');
     Route::get('/pengembalian/create', [AdminController::class, 'createPengembalian'])->name('pengembalian.create');
     Route::post('/pengembalian', [AdminController::class, 'storePengembalian'])->name('pengembalian.store');
@@ -96,9 +96,7 @@ Route::middleware(['auth', 'role:petugas,admin'])->prefix('petugas')->name('petu
     Route::post('/pengembalian/{id}/proses', [PetugasController::class, 'prosesPengembalian'])->name('pengembalian.proses');
 
     // Laporan
-    Route::get('/laporan', function() {
-        return 'Halaman Cetak Laporan dalam pengembangan.';
-    })->name('laporan.index');
+    Route::get('/laporan', [PetugasController::class, 'indexlaporan'])->name('laporan.index');
 
 });
 

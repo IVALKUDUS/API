@@ -70,10 +70,9 @@
                 @forelse($pengembalian as $item)
                     <tr class="hover:bg-gray-50 transition align-top">
 
-                        <!-- Peminjam & ID Pinjam -->
+                        <!-- Peminjam -->
                         <td class="py-3 px-4 border-b font-medium text-gray-900">
                             <div>{{ $item->user->name ?? 'User Dihapus' }}</div>
-                            <div class="text-xs text-gray-400">ID Pinjam: #{{ $item->id }}</div>
                             <div class="text-xs text-gray-500 font-normal">{{ $item->user->no_hp ?? '-' }}</div>
                         </td>
 

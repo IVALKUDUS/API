@@ -74,14 +74,13 @@
                 @forelse($pengembalians as $pengembalian)
                     <tr class="hover:bg-gray-50 transition align-top">
 
-                        <!-- Peminjam & ID Pinjam -->
+                        <!-- Peminjam -->
                         <td class="py-3 px-4 border-b font-medium text-gray-900">
                             <div>{{ $pengembalian->peminjaman->user->name ?? '-' }}</div>
-                            <div class="text-xs text-gray-400">ID Pinjam: #{{ $pengembalian->peminjaman_id }}</div>
                             <div class="text-xs text-gray-500 font-normal">{{ $pengembalian->peminjaman->user->no_hp ?? '' }}</div>
                         </td>
 
-                        <!-- Daftar Alat yang Dipinjam (Mengakses detailPinjam / detail_pinjam) -->
+                        <!-- Daftar Alat yang Dipinjam -->
                         <td class="py-3 px-4 border-b">
                             @php
                                 $details = $pengembalian->peminjaman->detailPinjam ?? $pengembalian->peminjaman->detail_pinjam ?? [];
