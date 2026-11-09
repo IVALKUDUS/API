@@ -14,7 +14,7 @@
 <div class="flex h-screen overflow-hidden">
 
     <!-- Sidebar -->
-    <aside class="w-64 bg-gray-900 text-white hidden md:flex flex-col shrink-0">
+    <aside class="w-72 bg-gray-900 text-white hidden md:flex flex-col shrink-0">
 
         <div class="p-4 text-xl font-bold border-b border-gray-800">
             Peminjaman Alat
@@ -57,8 +57,14 @@
 
                 <!-- Kelola Pengembalian -->
                 <a href="{{ route('admin.pengembalian.index') }}"
-                    class="block px-4 py-2 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white transition">
+                    class="block px-4 py-2 rounded-lg {{ request()->routeIs('admin.pengembalian.*') ? 'bg-gray-800 text-white font-medium shadow' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }} transition">
                     Kelola Pengembalian
+                </a>
+
+                <!-- Log Aktivitas -->
+                <a href="{{ route('admin.log.index') }}"
+                    class="block px-4 py-2 rounded-lg {{ request()->routeIs('admin.log.*') ? 'bg-gray-800 text-white font-medium shadow' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }} transition">
+                    Log Aktivitas
                 </a>
 
             @endif

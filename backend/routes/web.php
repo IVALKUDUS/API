@@ -5,7 +5,6 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\PetugasController;
 use App\Http\Controllers\PeminjamController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\API\LogAktivitasController;
 use App\Http\Controllers\API\PeminjamanController;
 
 // Home / Landing Page
@@ -17,6 +16,10 @@ Route::get('/', function () {
 Route::middleware(['guest'])->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
+
+    // Registrasi peminjam
+    Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
+    Route::post('/register', [AuthController::class, 'register']);
 });
 
 // Route Logout (Harus sudah login)
@@ -74,7 +77,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::delete('/pengembalian/{id}', [AdminController::class, 'destroyPengembalian'])->name('pengembalian.destroy');
     
     // Log Aktivitas
-    Route::get('/log-aktivitas', [LogAktivitasController::class, 'index'])->name('log.index');
+    Route::get('/log-aktivitas', [AdminController::class, 'indexLog'])->name('log.index');
 });
 
 // ==========================================
@@ -97,6 +100,7 @@ Route::middleware(['auth', 'role:petugas,admin'])->prefix('petugas')->name('petu
 
     // Laporan
     Route::get('/laporan', [PetugasController::class, 'indexlaporan'])->name('laporan.index');
+    Route::get('/laporan/pdf', [PetugasController::class, 'cetakLaporanPdf'])->name('laporan.pdf');
 
 });
 
@@ -104,12 +108,8 @@ Route::middleware(['auth', 'role:petugas,admin'])->prefix('petugas')->name('petu
 // ROUTE PEMINJAM
 // ==========================================
 Route::middleware(['auth', 'role:peminjam'])->prefix('peminjam')->name('peminjam.')->group(function () {
-    
-    Route::get('/katalog', function () {
-        return view('peminjam.katalog');
-    })->name('katalog');
 
-    // Route Store & Riwayat Peminjaman
-    Route::post('/peminjaman-api', [PeminjamanController::class, 'store'])->name('api.peminjaman.store');
-    Route::get('/riwayat-pinjam', [PeminjamanController::class, 'riwayat'])->name('api.peminjaman.riwayat');
+    Route::get('/katalog', [PeminjamController::class, 'katalog'])->name('katalog');
+    Route::post('/ajukan', [PeminjamController::class, 'ajukan'])->name('peminjaman.ajukan');
+    Route::get('/riwayat', [PeminjamController::class, 'riwayat'])->name('riwayat');
 });

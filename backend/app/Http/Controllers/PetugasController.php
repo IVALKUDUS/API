@@ -7,6 +7,7 @@ use App\Models\Pengembalian;
 use App\Models\Alat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon; // Tambahkan ini di bagian atas agar tidak error saat memanggil Carbon
 
 class PetugasController extends Controller
@@ -133,26 +134,43 @@ class PetugasController extends Controller
     }
 
 
-    // Menampilkan Cetak Laporan Peminjaman
-    public function indexlaporan(Request $request)
+    // Query laporan (dipakai bersama oleh tampilan web & PDF)
+    private function queryLaporan(Request $request)
     {
         $tglMulai   = $request->input('tgl_mulai');
         $tglSelesai = $request->input('tgl_selesai');
         $status     = $request->input('status');
 
-        $peminjamans = Peminjaman::with(['user', 'detailPinjams.alat'])
-            ->when($tglMulai, function ($query, $tglMulai) {
-                return $query->whereDate('tgl_pinjam', '>=', $tglMulai);
-            })
-            ->when($tglSelesai, function ($query, $tglSelesai) {
-                return $query->whereDate('tgl_pinjam', '<=', $tglSelesai);
-            })
-            ->when($status, function ($query, $status) {
-                return $query->where('status', $status);
-            })
+        return Peminjaman::with(['user', 'detailPinjams.alat'])
+            ->when($tglMulai, fn($q, $v) => $q->whereDate('tgl_pinjam', '>=', $v))
+            ->when($tglSelesai, fn($q, $v) => $q->whereDate('tgl_pinjam', '<=', $v))
+            ->when($status, fn($q, $v) => $q->where('status', $v))
             ->latest()
             ->get();
+    }
+
+    // Menampilkan Halaman Laporan Peminjaman
+    public function indexlaporan(Request $request)
+    {
+        $peminjamans = $this->queryLaporan($request);
 
         return view('petugas.laporan.index', compact('peminjamans'));
+    }
+
+    // Cetak Laporan Peminjaman dalam bentuk PDF
+    public function cetakLaporanPdf(Request $request)
+    {
+        $peminjamans = $this->queryLaporan($request);
+
+        $tglMulai   = $request->input('tgl_mulai');
+        $tglSelesai = $request->input('tgl_selesai');
+        $status     = $request->input('status');
+        $ringkasan  = $peminjamans->groupBy('status')->map->count();
+
+        $pdf = Pdf::loadView('petugas.laporan.pdf', compact(
+            'peminjamans', 'tglMulai', 'tglSelesai', 'status', 'ringkasan'
+        ))->setPaper('a4', 'portrait');
+
+        return $pdf->stream('laporan-peminjaman-' . now()->format('Ymd-His') . '.pdf');
     }
 }

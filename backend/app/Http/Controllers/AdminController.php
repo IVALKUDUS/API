@@ -41,8 +41,50 @@ class AdminController extends Controller
 
     public function index(): View
     {
-        $logs = LogAktivitas::with('user')->latest()->take(10)->get();
-        return view('admin.dashboard', compact('logs'));
+        $stats = [
+            'total_user'         => User::count(),
+            'total_alat'         => Alat::count(),
+            'total_peminjaman'   => Peminjaman::count(),
+            'total_pengembalian' => Pengembalian::count(),
+            'total_denda'        => Pengembalian::sum('denda'),
+        ];
+
+        // Jumlah peminjaman per status: ['diajukan' => 2, 'dipinjam' => 1, ...]
+        $statusCounts = Peminjaman::select('status', DB::raw('count(*) as total'))
+            ->groupBy('status')
+            ->pluck('total', 'status');
+
+        $peminjamanTerbaru = Peminjaman::with(['user', 'detailPinjam.alat'])
+            ->latest()
+            ->take(5)
+            ->get();
+
+        $stokMenipis = Alat::where('stok', '<=', 3)
+            ->orderBy('stok')
+            ->take(5)
+            ->get();
+
+        return view('admin.dashboard', compact('stats', 'statusCounts', 'peminjamanTerbaru', 'stokMenipis'));
+    }
+
+    // =========================================================
+    // LOG AKTIVITAS
+    // =========================================================
+
+    public function indexLog(Request $request): View
+    {
+        $search = $request->input('search');
+
+        $logs = LogAktivitas::with('user')
+            ->when($search, function ($query, $search) {
+                $query->where('aktivitas', 'like', "%{$search}%")
+                    ->orWhereHas('user', fn($q) => $q->where('name', 'like', "%{$search}%"));
+            })
+            ->latest()
+            ->paginate(15)
+            ->withQueryString();
+
+        return view('admin.log.index', compact('logs', 'search'));
     }
 
     // =========================================================
