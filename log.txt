@@ -79,3 +79,5 @@ find . -name "*:Zone.Identifier" -type f -delete
     -utility-
 docker exec -it laravel-api php artisan config:clear
 docker exec laravel-api php artisan storage:link
+wsl --install
+di docker pengaturan enable wsl sama turn on
