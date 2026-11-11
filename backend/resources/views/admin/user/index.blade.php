@@ -29,7 +29,7 @@
                     type="text"
                     name="search"
                     value="{{ $search ?? '' }}"
-                    placeholder="Cari nama, email, atau role..."
+                    placeholder="Cari nama, email, role, atau alamat..."
                     class="w-full px-3 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
 
@@ -72,6 +72,7 @@
                     <th class="py-3 px-4 border">Email</th>
                     <th class="py-3 px-4 border">Role</th>
                     <th class="py-3 px-4 border">No. HP</th>
+                    <th class="py-3 px-4 border">Alamat</th>
                     <th class="py-3 px-4 border text-center">Aksi</th>
 
                 </tr>
@@ -126,6 +127,10 @@
                             {{ $user->no_hp ?? '-' }}
                         </td>
 
+                        <td class="py-3 px-4 border max-w-xs">
+                            {{ $user->alamat ?? '-' }}
+                        </td>
+
                         <td class="py-3 px-4 border">
 
                             <div class="flex justify-center gap-2">
@@ -162,7 +167,7 @@
 
                     <tr>
 
-                        <td colspan="6" class="py-8 text-center text-gray-500">
+                        <td colspan="7" class="py-8 text-center text-gray-500">
                             Belum ada data user.
                         </td>
 

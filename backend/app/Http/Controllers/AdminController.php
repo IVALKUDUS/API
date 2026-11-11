@@ -197,7 +197,8 @@ class AdminController extends Controller
         $users = User::when($search, function ($query, $search) {
             $query->where('name', 'like', "%{$search}%")
                 ->orWhere('email', 'like', "%{$search}%")
-                ->orWhere('role', 'like', "%{$search}%");
+                ->orWhere('role', 'like', "%{$search}%")
+                ->orWhere('alamat', 'like', "%{$search}%");
         })
         ->latest()
         ->paginate(10)
@@ -220,6 +221,7 @@ class AdminController extends Controller
             'password' => 'required|string|min:8',
             'role' => 'required|in:admin,petugas,peminjam',
             'no_hp' => 'nullable|string|max:20',
+            'alamat' => 'nullable|string|max:500',
             'foto_profile' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // <-- Validasi baru
         ]);
 
@@ -230,6 +232,7 @@ class AdminController extends Controller
             'password' => Hash::make($request->password),
             'role' => $request->role,
             'no_hp' => $request->no_hp,
+            'alamat' => $request->alamat,
         ];
 
         // 3. Proses upload foto profil jika ada berkas yang diunggah
@@ -261,11 +264,12 @@ class AdminController extends Controller
             'email' => 'required|string|email|max:255|unique:users,email,' . $id,
             'role' => 'required|in:admin,petugas,peminjam',
             'no_hp' => 'nullable|string|max:20',
+            'alamat' => 'nullable|string|max:500',
             'password' => 'nullable|string|min:8',
             'foto_profile' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // <-- Validasi baru
         ]);
 
-        $data = $request->only(['name', 'email', 'role', 'no_hp']);
+        $data = $request->only(['name', 'email', 'role', 'no_hp', 'alamat']);
 
         if ($request->filled('password')) {
             $data['password'] = Hash::make($request->password);

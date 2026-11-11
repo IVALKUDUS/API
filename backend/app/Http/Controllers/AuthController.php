@@ -67,6 +67,7 @@ class AuthController extends Controller
             'name'     => ['required', 'string', 'max:255'],
             'email'    => ['required', 'email', 'max:255', 'unique:users,email'],
             'no_hp'    => ['nullable', 'string', 'max:20'],
+            'alamat'   => ['nullable', 'string', 'max:500'],
             'password' => ['required', 'confirmed', Password::min(8)],
             'foto_profile' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
         ]);
@@ -82,6 +83,7 @@ class AuthController extends Controller
             'name'     => $data['name'],
             'email'    => $data['email'],
             'no_hp'    => $data['no_hp'] ?? null,
+            'alamat'   => $data['alamat'] ?? null,
             'foto_profile' => $fotoPath,
             'password' => $data['password'],
             'role'     => 'peminjam',

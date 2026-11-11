@@ -107,7 +107,7 @@
             @enderror
         </div>
 
-        <div class="mb-6">
+        <div class="mb-4">
             <label class="block text-gray-700 text-sm font-semibold mb-2">
                 No. HP
             </label>
@@ -119,6 +119,23 @@
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
             @error('no_hp')
+                <span class="text-red-500 text-sm">
+                    {{ $message }}
+                </span>
+            @enderror
+        </div>
+
+        <div class="mb-6">
+            <label class="block text-gray-700 text-sm font-semibold mb-2">
+                Alamat
+            </label>
+            <textarea
+                name="alamat"
+                rows="3"
+                placeholder="Masukkan alamat lengkap"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >{{ old('alamat') }}</textarea>
+            @error('alamat')
                 <span class="text-red-500 text-sm">
                     {{ $message }}
                 </span>
