@@ -42,6 +42,7 @@ class PetugasController extends Controller
                     $q->where('name', 'like', "%{$search}%");
                 });
             })
+            ->orderByRaw('tgl_pengajuan_kembali IS NULL') // yang sudah diajukan peminjam tampil paling atas
             ->latest()
             ->get();
 

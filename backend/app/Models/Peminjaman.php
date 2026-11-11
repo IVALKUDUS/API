@@ -12,7 +12,8 @@ class Peminjaman extends Model
     protected $table = 'peminjaman';
 
     protected $fillable = [
-        'user_id', 'tgl_pinjam', 'tgl_kembali_plan', 'status'
+        'user_id', 'tgl_pinjam', 'tgl_kembali_plan', 'status',
+        'tgl_pengajuan_kembali', 'catatan_kembali'
     ];
 
     protected function casts(): array
@@ -20,6 +21,7 @@ class Peminjaman extends Model
         return [
             'tgl_pinjam' => 'date:Y-m-d',
             'tgl_kembali_plan' => 'date:Y-m-d',
+            'tgl_pengajuan_kembali' => 'datetime',
         ];
     }
 

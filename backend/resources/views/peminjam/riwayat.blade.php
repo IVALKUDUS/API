@@ -32,6 +32,10 @@
             </div>
         @endif
 
+        @if($errors->any())
+            <div class="alert alert-danger">{{ $errors->first() }}</div>
+        @endif
+
         @if(session('error'))
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 {{ session('error') }}
@@ -61,6 +65,7 @@
                         <th>Alat Dipinjam</th>
                         <th class="text-center">Status</th>
                         <th>Pengembalian</th>
+                        <th style="min-width:220px">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -97,10 +102,34 @@
                                     <span class="text-muted">-</span>
                                 @endif
                             </td>
+                            <td>
+                                @if($p->status === 'dipinjam')
+                                    @if($p->tgl_pengajuan_kembali)
+                                        <span class="badge bg-info text-dark">Menunggu konfirmasi petugas</span>
+                                        <div class="small text-muted mt-1">
+                                            Diajukan {{ $p->tgl_pengajuan_kembali->format('d M Y, H:i') }}
+                                        </div>
+                                        @if($p->catatan_kembali)
+                                            <div class="small text-muted">Catatan: {{ $p->catatan_kembali }}</div>
+                                        @endif
+                                    @else
+                                        <form action="{{ route('peminjam.pengembalian.ajukan', $p->id) }}" method="POST"
+                                              onsubmit="return confirm('Ajukan pengembalian alat ini?')">
+                                            @csrf
+                                            <textarea name="catatan_kembali" rows="2" maxlength="255"
+                                                class="form-control form-control-sm mb-1"
+                                                placeholder="Catatan kondisi alat (opsional)"></textarea>
+                                            <button type="submit" class="btn btn-success btn-sm w-100">Ajukan Pengembalian</button>
+                                        </form>
+                                    @endif
+                                @else
+                                    <span class="text-muted">-</span>
+                                @endif
+                            </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="text-center py-4 text-muted">
+                            <td colspan="7" class="text-center py-4 text-muted">
                                 Belum ada riwayat peminjaman.
                             </td>
                         </tr>

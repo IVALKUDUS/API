@@ -73,4 +73,31 @@ class PeminjamController extends Controller
 
         return view('peminjam.riwayat', compact('riwayat'));
     }
+
+    // Peminjam mengajukan pengembalian alat (menunggu konfirmasi petugas)
+    public function ajukanPengembalian(Request $request, $id)
+    {
+        $request->validate([
+            'catatan_kembali' => 'nullable|string|max:255',
+        ]);
+
+        // Hanya boleh mengajukan untuk peminjaman milik sendiri
+        $peminjaman = Peminjaman::where('user_id', auth()->id())->findOrFail($id);
+
+        if ($peminjaman->status !== 'dipinjam') {
+            return back()->with('error', 'Hanya peminjaman berstatus "Dipinjam" yang dapat diajukan pengembaliannya.');
+        }
+
+        if ($peminjaman->tgl_pengajuan_kembali) {
+            return back()->with('error', 'Pengembalian untuk peminjaman ini sudah diajukan. Menunggu konfirmasi petugas.');
+        }
+
+        $peminjaman->update([
+            'tgl_pengajuan_kembali' => now(),
+            'catatan_kembali'       => $request->input('catatan_kembali'),
+        ]);
+
+        return redirect()->route('peminjam.riwayat')
+            ->with('success', 'Pengajuan pengembalian terkirim. Silakan serahkan alat ke petugas untuk dikonfirmasi.');
+    }
 }

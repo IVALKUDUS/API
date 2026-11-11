@@ -55,7 +55,7 @@
             </thead>
             <tbody class="text-gray-700 text-sm">
                 @forelse($pengembalian as $item)
-                    <tr class="hover:bg-gray-50 transition align-top">
+                    <tr class="hover:bg-gray-50 transition align-top {{ $item->tgl_pengajuan_kembali ? 'bg-emerald-50' : '' }}">
                         <!-- Peminjam -->
                         <td class="py-3 px-4 border-b font-medium text-gray-900">
                             <div>{{ $item->user->name ?? 'User Dihapus' }}</div>
@@ -86,6 +86,17 @@
                             <span class="bg-amber-100 text-amber-800 font-semibold text-xs px-2.5 py-1 rounded-full border border-amber-200">
                                 {{ ucfirst($item->status) }}
                             </span>
+                            @if($item->tgl_pengajuan_kembali)
+                                <div class="mt-1">
+                                    <span class="bg-emerald-100 text-emerald-800 font-semibold text-[10px] px-2 py-0.5 rounded-full border border-emerald-200">
+                                        Diajukan kembali
+                                    </span>
+                                    <div class="text-[10px] text-gray-500 mt-0.5">{{ $item->tgl_pengajuan_kembali->format('d M Y H:i') }}</div>
+                                    @if($item->catatan_kembali)
+                                        <div class="text-[10px] text-gray-600 mt-0.5 italic">Catatan: {{ $item->catatan_kembali }}</div>
+                                    @endif
+                                </div>
+                            @endif
                         </td>
                         <!-- Tombol Aksi Sesuai Route Anda -->
                         <td class="py-3 px-4 border-b text-center whitespace-nowrap">
