@@ -12,6 +12,30 @@ use Carbon\Carbon; // Tambahkan ini di bagian atas agar tidak error saat memangg
 
 class PetugasController extends Controller
 {
+    //Dashboard petugas
+    public function dashboard()
+    {
+        $hariIni = now()->toDateString();
+
+        $stats = [
+            'menunggu'          => Peminjaman::where('status', 'diajukan')->count(),
+            'dipinjam'          => Peminjaman::where('status', 'dipinjam')->count(),
+            'ajuan_kembali'     => Peminjaman::where('status', 'dipinjam')->whereNotNull('tgl_pengajuan_kembali')->count(),
+            'jatuh_tempo'       => Peminjaman::where('status', 'dipinjam')->whereDate('tgl_kembali_plan', '<', $hariIni)->count(),
+            'diproses_hari_ini' => Pengembalian::where('petugas_id', auth()->id())->whereDate('tgl_kembali', $hariIni)->count(),
+        ];
+
+        $pengajuanBaru = Peminjaman::with(['user', 'detailPinjam.alat'])
+            ->where('status', 'diajukan')->latest()->take(5)->get();
+
+        $jatuhTempo = Peminjaman::with(['user', 'detailPinjam.alat'])
+            ->where('status', 'dipinjam')->orderBy('tgl_kembali_plan')->take(5)->get();
+
+        $stokMenipis = Alat::where('stok', '<=', 3)->orderBy('stok')->take(5)->get();
+
+        return view('petugas.dashboard', compact('stats', 'pengajuanBaru', 'jatuhTempo', 'stokMenipis'));
+    }
+    
     // Menampilkan daftar pengajuan peminjaman dari siswa/peminjam
     public function indexPeminjaman(Request $request)
     {

@@ -7,9 +7,36 @@ use App\Models\Peminjaman;
 use App\Models\DetilPinjam;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Pengembalian;
 
 class PeminjamController extends Controller
 {
+   //Dashboard petugas
+    public function dashboard()
+    {
+        $userId  = auth()->id();
+        $hariIni = now()->toDateString();
+
+        $milik = Peminjaman::where('user_id', $userId);
+
+        $stats = [
+            'diajukan'    => (clone $milik)->where('status', 'diajukan')->count(),
+            'dipinjam'    => (clone $milik)->where('status', 'dipinjam')->count(),
+            'jatuh_tempo' => (clone $milik)->where('status', 'dipinjam')->whereDate('tgl_kembali_plan', '<', $hariIni)->count(),
+            'total'       => (clone $milik)->count(),
+            'total_denda' => Pengembalian::whereHas('peminjaman', fn ($q) => $q->where('user_id', $userId))->sum('denda'),
+        ];
+
+        $sedangDipinjam = Peminjaman::with('detailPinjam.alat')
+            ->where('user_id', $userId)->where('status', 'dipinjam')
+            ->orderBy('tgl_kembali_plan')->get();
+
+        $terbaru = Peminjaman::with('detailPinjam.alat')
+            ->where('user_id', $userId)->latest()->take(5)->get();
+
+        return view('peminjam.dashboard', compact('stats', 'sedangDipinjam', 'terbaru'));
+    }
+
     // Halaman katalog alat
     public function katalog()
     {

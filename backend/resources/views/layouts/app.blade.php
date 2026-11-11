@@ -73,6 +73,12 @@
             <!-- MENU KHUSUS PETUGAS -->
             @if(auth()->user()->role === 'petugas')
 
+                <!-- Dashboard -->
+                <a href="{{ route('petugas.dashboard') }}"
+                    class="block px-4 py-2 rounded-lg {{ request()->routeIs('petugas.dashboard') ? 'bg-gray-800 text-white font-medium shadow' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }} transition">
+                    Dashboard
+                </a>
+            
                 <!-- Persetujuan Peminjaman -->
                 <a href="{{ route('petugas.peminjaman.index') }}"
                     class="block px-4 py-2 rounded-lg {{ request()->routeIs('petugas.peminjaman.*') ? 'bg-gray-800 text-white font-medium shadow' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }} transition">

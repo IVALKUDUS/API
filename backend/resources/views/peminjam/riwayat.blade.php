@@ -10,18 +10,7 @@
 <body class="bg-light">
 
     <!-- NAVBAR -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4 shadow-sm">
-        <div class="container">
-            <a class="navbar-brand font-weight-bold" href="{{ route('peminjam.katalog') }}">Panel Peminjam</a>
-            <div class="d-flex align-items-center">
-                <a href="{{ route('peminjam.katalog') }}" class="btn btn-outline-light btn-sm me-2">Katalog Alat</a>
-                <form action="{{ route('logout') }}" method="POST" class="d-inline">
-                    @csrf
-                    <button type="submit" class="btn btn-light btn-sm text-primary font-weight-bold">Logout</button>
-                </form>
-            </div>
-        </div>
-    </nav>
+    @include('peminjam._navbar')
 
     <div class="container">
         <!-- NOTIFIKASI / FLASH MESSAGE -->

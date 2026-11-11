@@ -36,9 +36,9 @@ class AuthController extends Controller
             if ($user->role === 'admin') {
                 return redirect()->route('admin.dashboard');
             } elseif ($user->role === 'petugas') {
-                return redirect()->route('petugas.peminjaman.index');
+                return redirect()->route('petugas.dashboard');
             } elseif ($user->role === 'peminjam') {
-                return redirect()->route('peminjam.katalog');
+                return redirect()->route('peminjam.dashboard');
             }
 
             Auth::logout();
@@ -92,7 +92,7 @@ class AuthController extends Controller
         Auth::login($user);
         $request->session()->regenerate();
 
-        return redirect()->route('peminjam.katalog')
+        return redirect()->route('peminjam.dashboard')
             ->with('success', 'Registrasi berhasil. Selamat datang, ' . $user->name . '!');
     }
 

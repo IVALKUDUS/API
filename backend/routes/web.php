@@ -6,6 +6,7 @@ use App\Http\Controllers\PetugasController;
 use App\Http\Controllers\PeminjamController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\API\PeminjamanController;
+use App\Http\Controllers\AkunController;
 
 // Home / Landing Page
 Route::get('/', function () {
@@ -85,6 +86,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 // ==========================================
 Route::middleware(['auth', 'role:petugas,admin'])->prefix('petugas')->name('petugas.')->group(function () {
 
+    // Dashboard
+    Route::get('/dashboard', [PetugasController::class, 'dashboard'])->name('dashboard');
+
     // Peminjaman & Persetujuan
     Route::get('/peminjaman', [PetugasController::class, 'indexPeminjaman'])->name('peminjaman.index');
     Route::post('/peminjaman/{id}/setujui', [PetugasController::class, 'setujuiPeminjaman'])->name('peminjaman.setujui');
@@ -109,8 +113,28 @@ Route::middleware(['auth', 'role:petugas,admin'])->prefix('petugas')->name('petu
 // ==========================================
 Route::middleware(['auth', 'role:peminjam'])->prefix('peminjam')->name('peminjam.')->group(function () {
 
+    //Dashboard
+    Route::get('/dashboard', [PeminjamController::class, 'dashboard'])->name('dashboard');
+
     Route::get('/katalog', [PeminjamController::class, 'katalog'])->name('katalog');
     Route::post('/ajukan', [PeminjamController::class, 'ajukan'])->name('peminjaman.ajukan');
     Route::get('/riwayat', [PeminjamController::class, 'riwayat'])->name('riwayat');
     Route::post('/riwayat/{id}/ajukan-kembali', [PeminjamController::class, 'ajukanPengembalian'])->name('pengembalian.ajukan');
 });
+
+// ==========================================
+// ROUTE AKUN (dipakai semua role)
+// ==========================================
+foreach (['admin', 'petugas', 'peminjam'] as $role) {
+    Route::middleware(['auth', "role:$role"])
+        ->prefix($role)
+        ->name("$role.")
+        ->group(function () {
+            Route::get('/akun', [AkunController::class, 'show'])->name('akun.index');
+            Route::get('/akun/edit', [AkunController::class, 'edit'])->name('akun.edit');
+            Route::put('/akun', [AkunController::class, 'update'])->name('akun.update');
+            Route::get('/akun/password', [AkunController::class, 'editPassword'])->name('akun.password.edit');
+            Route::put('/akun/password', [AkunController::class, 'updatePassword'])->name('akun.password');
+            Route::delete('/akun/foto', [AkunController::class, 'hapusFoto'])->name('akun.foto.destroy');
+        });
+}
