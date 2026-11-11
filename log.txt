@@ -76,6 +76,13 @@ docker compose exec app-laravel php artisan key:generate
 docker compose exec app-laravel php artisan migrate --seed
 find . -name "*:Zone.Identifier" -type f -delete
 
+git status
+git add .
+git commit -m ""
+git push
+git restore .
+git clone https://github.com/IVALKUDUS/API.git
+
     -extra-
 docker exec -it laravel-api php artisan config:clear
 docker exec laravel-api php artisan storage:link
