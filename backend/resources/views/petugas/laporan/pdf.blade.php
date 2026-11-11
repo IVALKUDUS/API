@@ -16,6 +16,10 @@
         table.data th { background: #e5e7eb; text-transform: uppercase; font-size: 9px; text-align: left; }
         table.data th, table.data td { border: 1px solid #9ca3af; padding: 5px 6px; vertical-align: top; }
         table.data tr { page-break-inside: avoid; }
+        table.data table.who { width: auto; border-collapse: collapse; }
+        table.data table.who td { border: none; padding: 0 6px 0 0; vertical-align: middle; }
+        .ph { width: 26px; height: 26px; border-radius: 13px; background: #e5e7eb; color: #4b5563;
+              text-align: center; line-height: 26px; font-size: 9px; font-weight: bold; }
         .center { text-align: center; }
         .badge { display: inline-block; padding: 1px 6px; border: 1px solid #6b7280; border-radius: 8px; font-size: 9px; }
         .muted { color: #6b7280; }
@@ -71,7 +75,24 @@
             @forelse($peminjamans as $p)
                 <tr>
                     <td class="center">{{ $loop->iteration }}</td>
-                    <td>{{ $p->user->name ?? 'N/A' }}</td>
+                    <td>
+                        @php
+                            $nama = $p->user->name ?? 'N/A';
+                            $foto = $p->user?->fotoDataUri();
+                        @endphp
+                        <table class="who">
+                            <tr>
+                                <td>
+                                    @if($foto)
+                                        <img src="{{ $foto }}" width="26" height="26" alt="">
+                                    @else
+                                        <div class="ph">{{ mb_strtoupper(mb_substr($nama, 0, 2)) }}</div>
+                                    @endif
+                                </td>
+                                <td>{{ $nama }}</td>
+                            </tr>
+                        </table>
+                    </td>
                     <td>
                         @foreach($p->detailPinjams as $d)
                             <div>- {{ $d->alat->nama_alat ?? 'Alat tidak ditemukan' }} ({{ $d->jumlah }} pcs)</div>

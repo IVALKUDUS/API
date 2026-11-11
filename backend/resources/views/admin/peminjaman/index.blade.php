@@ -82,7 +82,9 @@
 
                         <!-- Peminjam -->
                         <td class="py-3 px-4 border-b font-medium text-gray-900">
-                            {{ $peminjaman->user->name ?? $peminjaman->user->nama ?? $peminjaman->nama_peminjam ?? 'Nama Tidak Ada' }}
+                            <x-user-avatar
+                                :user="$peminjaman->user"
+                                :name="$peminjaman->user->nama ?? $peminjaman->nama_peminjam ?? 'Nama Tidak Ada'" />
                         </td>
 
                         <!-- Alat -->
@@ -196,7 +198,6 @@
 
                     </tr>
                 @empty
-                                    <button
                     <tr>
                         <td colspan="5" class="py-4 text-center text-gray-500">
                             Belum ada data peminjaman.

@@ -58,8 +58,9 @@
                     <tr class="hover:bg-gray-50 transition align-top {{ $item->tgl_pengajuan_kembali ? 'bg-emerald-50' : '' }}">
                         <!-- Peminjam -->
                         <td class="py-3 px-4 border-b font-medium text-gray-900">
-                            <div>{{ $item->user->name ?? 'User Dihapus' }}</div>
-                            <div class="text-xs text-gray-500 font-normal">{{ $item->user->no_hp ?? '-' }}</div>
+                            <x-user-avatar :user="$item->user" name="User Dihapus">
+                                <div class="text-xs text-gray-500 font-normal">{{ $item->user->no_hp ?? '-' }}</div>
+                            </x-user-avatar>
                         </td>
                         <!-- Daftar Alat yang Dipinjam -->
                         <td class="py-3 px-4 border-b">

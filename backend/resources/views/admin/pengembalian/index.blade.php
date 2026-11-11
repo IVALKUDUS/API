@@ -76,8 +76,9 @@
 
                         <!-- Peminjam -->
                         <td class="py-3 px-4 border-b font-medium text-gray-900">
-                            <div>{{ $pengembalian->peminjaman->user->name ?? '-' }}</div>
-                            <div class="text-xs text-gray-500 font-normal">{{ $pengembalian->peminjaman->user->no_hp ?? '' }}</div>
+                            <x-user-avatar :user="$pengembalian->peminjaman->user">
+                                <div class="text-xs text-gray-500 font-normal">{{ $pengembalian->peminjaman->user->no_hp ?? '' }}</div>
+                            </x-user-avatar>
                         </td>
 
                         <!-- Daftar Alat yang Dipinjam -->
@@ -123,7 +124,7 @@
 
                         <!-- Petugas Penerima -->
                         <td class="py-3 px-4 border-b text-xs text-gray-600 whitespace-nowrap">
-                            {{ $pengembalian->petugas->name ?? '-' }}
+                            <x-user-avatar :user="$pengembalian->petugas" size="w-8 h-8" />
                         </td>
 
                         <!-- Aksi Hapus / Rollback -->

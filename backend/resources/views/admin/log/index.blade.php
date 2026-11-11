@@ -38,7 +38,7 @@
                                 {{ $log->created_at ? $log->created_at->format('d M Y, H:i') : '-' }}
                             </td>
                             <td class="py-3 px-4 font-medium text-gray-900 whitespace-nowrap">
-                                {{ $log->user->name ?? 'Sistem' }}
+                                <x-user-avatar :user="$log->user" name="Sistem" />
                             </td>
                             <td class="py-3 px-4">{{ $log->aktivitas }}</td>
                         </tr>

@@ -124,7 +124,9 @@
 
                         <!-- Peminjam -->
                         <td class="py-3 px-4 border-b border-gray-200 print:border-gray-300 font-medium text-gray-900">
-                            {{ $peminjaman->user->name ?? $peminjaman->user->nama ?? $peminjaman->nama_peminjam ?? 'N/A' }}
+                            <x-user-avatar
+                                :user="$peminjaman->user"
+                                :name="$peminjaman->user->nama ?? $peminjaman->nama_peminjam ?? 'N/A'" />
                         </td>
 
                         <!-- Alat -->

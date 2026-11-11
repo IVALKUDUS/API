@@ -57,7 +57,7 @@
                 @forelse($peminjamans as $item)
                     <tr class="hover:bg-gray-50 transition align-top">
                         <td class="py-3 px-4 border-b font-medium text-gray-900">
-                            {{ $item->user->name ?? 'User Dihapus' }}
+                            <x-user-avatar :user="$item->user" name="User Dihapus" />
                         </td>
                         <td class="py-3 px-4 border-b">{{ $item->tgl_pinjam }}</td>
                         <td class="py-3 px-4 border-b">{{ $item->tgl_kembali_plan }}</td>
