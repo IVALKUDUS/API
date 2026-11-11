@@ -10,7 +10,7 @@
 <body class="bg-light">
 
     <!-- NAVBAR -->
-    @include('peminjam._navbar')
+    @include('peminjam.navbar')
 
     <div class="container">
         <!-- NOTIFIKASI / FLASH MESSAGE -->

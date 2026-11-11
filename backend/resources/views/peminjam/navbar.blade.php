@@ -1,15 +1,15 @@
 @php
     $menu = [
+        ['label' => 'Dashboard',      'route' => 'peminjam.dashboard',  'match' => 'peminjam.dashboard'],
         ['label' => 'Katalog Alat',   'route' => 'peminjam.katalog',    'match' => 'peminjam.katalog'],
         ['label' => 'Riwayat Pinjam', 'route' => 'peminjam.riwayat',    'match' => 'peminjam.riwayat'],
         ['label' => 'Akun Saya',      'route' => 'peminjam.akun.index', 'match' => 'peminjam.akun.*'],
-        ['label' => 'Dashboard', 'route' => 'peminjam.dashboard', 'match' => 'peminjam.dashboard'],
     ];
 @endphp
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4 shadow-sm">
     <div class="container">
-        <a class="navbar-brand fw-bold" href="{{ route('peminjam.katalog') }}">Panel Peminjam</a>
+        <a class="navbar-brand fw-bold" href="{{ route('peminjam.dashboard') }}">Panel Peminjam</a>
         <div class="d-flex align-items-center">
             @foreach ($menu as $item)
                 <a href="{{ route($item['route']) }}"

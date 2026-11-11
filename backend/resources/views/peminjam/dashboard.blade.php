@@ -8,7 +8,7 @@
 </head>
 <body class="bg-light">
 
-    @include('peminjam._navbar')
+    @include('peminjam.navbar')
 
     <div class="container">
         @if(session('success'))

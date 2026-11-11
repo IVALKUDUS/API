@@ -10,8 +10,8 @@
 <body class="bg-light">
 
     <!-- NAVBAR -->
-    @include('peminjam._navbar')
-    
+    @include('peminjam.navbar')
+
     <div class="container" style="max-width: 760px;">
         @if(session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">

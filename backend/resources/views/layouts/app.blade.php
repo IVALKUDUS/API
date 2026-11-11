@@ -20,7 +20,7 @@
             Peminjaman Alat
         </div>
 
-        <nav class="flex-1 p-4 space-y-2">
+        <nav class="flex-1 min-h-0 overflow-y-auto p-4 space-y-2">
 
             <!-- MENU KHUSUS ADMIN -->
             @if(auth()->user()->role === 'admin')
@@ -101,12 +101,23 @@
 
         </nav>
 
-        <div class="p-4 border-t border-gray-800 text-sm">
-            Login sebagai
-            <span class="font-semibold">
-                {{ auth()->user()->name ?? 'User' }}
-            </span>
-        </div>
+        <!-- Panel Akun -->
+        <a href="{{ route(auth()->user()->role . '.akun.index') }}"
+            class="flex items-center gap-3 p-4 border-t border-gray-800 text-sm shrink-0 transition {{ request()->routeIs('*.akun.*') ? 'bg-gray-800' : 'hover:bg-gray-800' }}">
+            @if(auth()->user()->foto_profile)
+                <img src="{{ asset('storage/' . auth()->user()->foto_profile) }}" alt="Foto profil"
+                     class="w-10 h-10 rounded-full object-cover border border-gray-700 shrink-0">
+            @else
+                <div class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center font-semibold text-xs uppercase shrink-0">
+                    {{ mb_substr(auth()->user()->name ?? 'U', 0, 2) }}
+                </div>
+            @endif
+            <div class="min-w-0">
+                <div class="text-gray-400 text-xs">Login sebagai</div>
+                <div class="font-semibold truncate">{{ auth()->user()->name ?? 'User' }}</div>
+                <div class="text-xs text-blue-300">Akun Saya</div>
+            </div>
+        </a>
 
     </aside>
 
